@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         AddPmButtonToUsernameAndDoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.36
+// @version      0.37
+// @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/addpm.js
 // @description  does stuff
 // @author       Chanterelle
 // @match        https://broadcasthe.net/*
