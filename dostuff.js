@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         DoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.40
-// @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/dostuff.js
+// @version      0.41
+// @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/addpm.js
 // @description  does stuff
 // @author       Chanterelle
 // @match        https://broadcasthe.net/*
@@ -99,7 +99,7 @@
             }).appendTo(container);
             textbox.after(container);
             notebox.before(document.createElement('br'));
-        }
+        };
         
         var torrentBBcodeGenerator = function() {
             var tech_specs_table = $('#table_manual_upload_2 > tbody');
@@ -131,15 +131,46 @@
             tech_specs_table.append(row);
             //textbox.after(container);
             //notebox.before(document.createElement('br'));
-        }
+        };
+        
+        var noBannerLinks = function() {
+            var banner = $('div > form > table:nth-child(3) > tbody > tr:nth-child(2) > td.tdleft')[0];
+            var fanart = $('div > form > table:nth-child(3) > tbody > tr:nth-child(6) > td.tdleft')[0];
+            var poster = $('div > form > table:nth-child(3) > tbody > tr:nth-child(8) > td.tdleft')[0];
+            
+            var nobanner = $('<input>', {
+                type: 'button',
+                value: 'No banner available',
+                style: 'vertical-align:top;',
+                click: function() {
+                    banner.children[0].value = 'https://cdn2.broadcasthe.net/https/i.imgur.com/hIq9qAn.png';
+                }
+            }).appendTo(banner);
+            var nofanart = $('<input>', {
+                type: 'button',
+                value: 'No fan art available',
+                style: 'vertical-align:top;',
+                click: function() {
+                    fanart.children[0].value = 'https://cdn2.broadcasthe.net/https/i.imgur.com/55K4Dww.png';
+                }
+            }).appendTo(fanart);
+            var noposter = $('<input>', {
+                type: 'button',
+                value: 'No poster available',
+                style: 'vertical-align:top;',
+                click: function() {
+                    poster.children[0].value = 'https://cdn2.broadcasthe.net/https/i.imgur.com/qHx6IsI.png';
+                }
+            }).appendTo(poster);
+        };
         
         if(url.startsWith('user.php?action=search')) addPMToSearch();
         if(url.startsWith('forums.php')) addPMToForums();
         if(url.startsWith('torrents.php?id=')) addPMToTorrents();
         if(url.valueOf() === 'torrents.php'.valueOf()) addPMToRecentUploads();
         if(url.startsWith('staffpm.php?action=viewconv')) staffPMBBcodeGenerator();
-        torrentBBcodeGenerator();
-        //if(url.startsWith('torrents.php?action=edit') || url.startsWith('upload.php')) 
+        if(url.startsWith('torrents.php?action=edit') || url.startsWith('upload.php')) torrentBBcodeGenerator();
+        if(url.startsWith('series.php?action=edit_info')) noBannerLinks();
         modifyTorrentDetailPage();
     });
 }(jQuery));
