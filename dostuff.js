@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.42
+// @version      0.43
 // @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/dostuff.js
 // @description  does stuff
 // @author       Chanterelle
@@ -73,6 +73,19 @@
                 if(filenum > 1) output += 's';
                 output += ')';
                 $this.parent().parent().prev().prev().children()[1].innerHTML += output;
+            });
+            
+            // Add SRRDB search link for Scene torrents
+            $('table.torrent_table > tbody > tr > td:nth-child(1) > a').each(function() {
+                if(this.innerHTML.endsWith('Scene')) {
+                    var $this = $(this);
+                    var releaseNode = this.parentNode.parentNode.nextSibling.nextSibling.children[0];
+                    var releaseName = releaseNode.childNodes[0].nodeValue.replace(/\s/g,'').replace('»', '');
+                    $(releaseNode.children[0]).append($('<a>', {
+                        href: 'http://www.srrdb.com/release/details/' + releaseName,
+                        text: '(SRRDB)'
+                    }));
+                }
             });
         };
 
