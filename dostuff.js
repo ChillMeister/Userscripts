@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         DoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.41
-// @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/addpm.js
+// @version      0.42
+// @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/dostuff.js
 // @description  does stuff
 // @author       Chanterelle
 // @match        https://broadcasthe.net/*
@@ -77,6 +77,8 @@
         };
 
         var staffPMBBcodeGenerator = function() {
+            // Add a text field to insert a staff note in PMs
+            // This way I don't have to !bbcode2 all the time
             var textbox = $('#quickpost');
             if(!textbox) return;
             var container = document.createElement('div');
@@ -102,6 +104,7 @@
         };
         
         var torrentBBcodeGenerator = function() {
+            // Same thing but for torrents
             var tech_specs_table = $('#table_manual_upload_2 > tbody');
             var textbox = $('#release_desc');
             var row = document.createElement('tr');
@@ -129,11 +132,10 @@
                 }
             }).appendTo(container);
             tech_specs_table.append(row);
-            //textbox.after(container);
-            //notebox.before(document.createElement('br'));
         };
         
         var noBannerLinks = function() {
+            // I hate copy pasting the links
             var banner = $('div > form > table:nth-child(3) > tbody > tr:nth-child(2) > td.tdleft')[0];
             var fanart = $('div > form > table:nth-child(3) > tbody > tr:nth-child(6) > td.tdleft')[0];
             var poster = $('div > form > table:nth-child(3) > tbody > tr:nth-child(8) > td.tdleft')[0];
@@ -166,11 +168,10 @@
         
         if(url.startsWith('user.php?action=search')) addPMToSearch();
         if(url.startsWith('forums.php')) addPMToForums();
-        if(url.startsWith('torrents.php?id=')) addPMToTorrents();
+        if(url.startsWith('torrents.php?id=')) addPMToTorrents() || modifyTorrentDetailPage();
         if(url.valueOf() === 'torrents.php'.valueOf()) addPMToRecentUploads();
         if(url.startsWith('staffpm.php?action=viewconv')) staffPMBBcodeGenerator();
         if(url.startsWith('torrents.php?action=edit') || url.startsWith('upload.php')) torrentBBcodeGenerator();
         if(url.startsWith('series.php?action=edit_info')) noBannerLinks();
-        modifyTorrentDetailPage();
     });
 }(jQuery));
