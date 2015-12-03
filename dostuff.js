@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.43
+// @version      0.44
 // @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/dostuff.js
 // @description  does stuff
 // @author       Chanterelle
@@ -181,7 +181,7 @@
         
         if(url.startsWith('user.php?action=search')) addPMToSearch();
         if(url.startsWith('forums.php')) addPMToForums();
-        if(url.startsWith('torrents.php?id=')) addPMToTorrents() || modifyTorrentDetailPage();
+        if(url.startsWith('torrents.php?')) addPMToTorrents() || modifyTorrentDetailPage();
         if(url.valueOf() === 'torrents.php'.valueOf()) addPMToRecentUploads();
         if(url.startsWith('staffpm.php?action=viewconv')) staffPMBBcodeGenerator();
         if(url.startsWith('torrents.php?action=edit') || url.startsWith('upload.php')) torrentBBcodeGenerator();
