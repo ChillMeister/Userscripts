@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DoStuff
 // @namespace    http://tampermonkey.net/
-// @version      0.44
+// @version      0.45
 // @updateURL    https://raw.githubusercontent.com/ChillMeister/Userscripts/master/dostuff.js
 // @description  does stuff
 // @author       Chanterelle
@@ -17,38 +17,12 @@
     $(document).ready(function(){
         var url = window.location.href.replace(/^(?:\/\/|[^\/]+)*\//, "");
         var myUsername = $('a.username')[0].innerHTML;
-        var addPMToSearch = function() {
-            // Search
-            $('#user .box.pad.center tbody tr > td a').each(function(){
-                var id = $(this).attr('href').replace('user.php?id=','');
-                $(this).after('&nbsp;<a href="inbox.php?action=compose&to='+ id + '">[PM]</a> ');
-            });
-        };
-        var addPMToForums = function() {
-            // Forums
-            $('#forums .thin table tr.colhead_dark').each(function(){
-                var id = $("td strong a", this).attr('href').replace('user.php?id=','');
-                $("td > span + span", this).prepend('<a href="inbox.php?action=compose&to='+ id + '">[PM]</a>&nbsp;');
-            });
-        };
-        var addPMToTorrents = function() {
-            // Torrent detail page
-            $('tr.pad > td > blockquote > a').each(function() {
-                if($(this).attr('href').startsWith('user.php?id=')) {
-                    var id = $(this).attr('href').replace('user.php?id=','');
-                    $(this).after('&nbsp;<a href="inbox.php?action=compose&to='+ id + '">[PM]</a> ');
-                }
-            });
-        };
-        var addPMToRecentUploads = function() {
-            // Torrents page
-            $('#torrent_table > tbody > tr.torrent').each(function() {
-                var link = $('td:nth-child(3) > div.nobr > a', this);
-                // Some torrents are uploaded by AutoUp or are anonymous and have no link
-                if(link && link.attr('href')) {
-                    var id = link.attr('href').replace('user.php?id=', '');
-                    link.after('&nbsp;<a href="inbox.php?action=compose&to='+ id + '">[PM]</a> ');
-                }
+        
+        var addPMToUsernames = function() {
+            $('#user .box.pad.center tbody tr > td a, #torrents .torrent_table table ~ div + blockquote > a, #torrents .torrent_table .torrent > td:nth-child(3) > .nobr > a').each(function(){
+                var $this = $(this);
+                var id = $this.attr('href').replace('user.php?id=','');
+                $this.after(' <a href="inbox.php?action=compose&to='+ id + '">[PM]</a> ');
             });
         };
 
@@ -74,7 +48,7 @@
                 output += ')';
                 $this.parent().parent().prev().prev().children()[1].innerHTML += output;
             });
-            
+
             // Add SRRDB search link for Scene torrents
             $('table.torrent_table > tbody > tr > td:nth-child(1) > a').each(function() {
                 if(this.innerHTML.endsWith('Scene')) {
@@ -83,7 +57,11 @@
                     var releaseName = releaseNode.childNodes[0].nodeValue.replace(/\s/g,'').replace('»', '');
                     $(releaseNode.children[0]).append($('<a>', {
                         href: 'http://www.srrdb.com/release/details/' + releaseName,
-                        text: '(SRRDB)'
+                        text: '(SRRDB) '
+                    }));
+                    $(releaseNode.children[0]).append($('<a>', {
+                        href: 'http://predb.org/search?searchstr=' + releaseName,
+                        text: '(PreDB)'
                     }));
                 }
             });
@@ -115,7 +93,7 @@
             textbox.after(container);
             notebox.before(document.createElement('br'));
         };
-        
+
         var torrentBBcodeGenerator = function() {
             // Same thing but for torrents
             var tech_specs_table = $('#table_manual_upload_2 > tbody');
@@ -146,13 +124,13 @@
             }).appendTo(container);
             tech_specs_table.append(row);
         };
-        
+
         var noBannerLinks = function() {
             // I hate copy pasting the links
             var banner = $('div > form > table:nth-child(3) > tbody > tr:nth-child(2) > td.tdleft')[0];
             var fanart = $('div > form > table:nth-child(3) > tbody > tr:nth-child(6) > td.tdleft')[0];
             var poster = $('div > form > table:nth-child(3) > tbody > tr:nth-child(8) > td.tdleft')[0];
-            
+
             var nobanner = $('<input>', {
                 type: 'button',
                 value: 'No banner available',
@@ -178,11 +156,10 @@
                 }
             }).appendTo(poster);
         };
-        
-        if(url.startsWith('user.php?action=search')) addPMToSearch();
+
+        addPMToUsernames();
         if(url.startsWith('forums.php')) addPMToForums();
-        if(url.startsWith('torrents.php?')) addPMToTorrents() || modifyTorrentDetailPage();
-        if(url.valueOf() === 'torrents.php'.valueOf()) addPMToRecentUploads();
+        if(url.startsWith('torrents.php?')) modifyTorrentDetailPage();
         if(url.startsWith('staffpm.php?action=viewconv')) staffPMBBcodeGenerator();
         if(url.startsWith('torrents.php?action=edit') || url.startsWith('upload.php')) torrentBBcodeGenerator();
         if(url.startsWith('series.php?action=edit_info')) noBannerLinks();
